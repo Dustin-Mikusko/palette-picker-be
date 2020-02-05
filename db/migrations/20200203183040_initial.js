@@ -1,13 +1,9 @@
 
 exports.up = function(knex) {
   return knex.schema
-    .createTable('users', table => {
+    .createTable('projects', table => {
       table.increments('id').primary();
-      table.string('email');
-      table.string('name');
-      table.integer('palette_1_id').unsigned();
-      table.integer('palette_2_id').unsigned();
-      table.integer('palette_3_id').unsigned();
+      table.string('title');
 
       table.timestamps(true, true);
     })
@@ -17,26 +13,17 @@ exports.up = function(knex) {
 
       table.timestamps(true, true)
     })
-    .createTable('projects', table => {
+    .createTable('palettes', table => {
       table.increments('id').primary();
-      table.integer('user_id').unsigned();
-      table.foreign('user_id')
-        .references('users.id');
-      table.integer('color_1_id').unsigned();
-      table.foreign('color_1_id')
-        .references('colors.id');
-      table.integer('color_2_id').unsigned();
-      table.foreign('color_2_id')
-        .references('colors.id');
-      table.integer('color_3_id').unsigned();
-      table.foreign('color_3_id')
-        .references('colors.id');
-      table.integer('color_4_id').unsigned();
-      table.foreign('color_4_id')
-        .references('colors.id');
-      table.integer('color_5_id').unsigned();
-      table.foreign('color_5_id')
-        .references('colors.id');
+      table.string('title');
+      table.string('color_1_id');
+      table.string('color_2_id');
+      table.string('color_3_id');
+      table.string('color_4_id');
+      table.string('color_5_id');
+      table.integer('project_id');
+      table.foreign('project_id')
+        .references('projects.id');
 
       table.timestamps(true, true)
     })
@@ -44,7 +31,7 @@ exports.up = function(knex) {
 
 exports.down = function(knex) {
   return knex.schema
-    .dropTable('projects')
+    .dropTable('palettes')
     .dropTable('colors')
-    .dropTable('users')
+    .dropTable('projects')
 };
