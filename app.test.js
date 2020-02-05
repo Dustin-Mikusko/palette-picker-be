@@ -1,3 +1,7 @@
+import request from 'supertest';
+import app from './app.js';
+import '@babel/polyfill';
+
 const environment = process.env.NODE_ENV || 'development'
 const configuration = require('./knexfile')[environment]
 const database = require('knex')(configuration)
