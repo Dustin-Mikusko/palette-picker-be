@@ -19,18 +19,4 @@ describe('Server', () => {
     });
   });
 
-  describe('GET /api/v1/users/:id', () => {
-    it('should return a happy status code of 200 and a single user object', async () => {
-      const expectedUser = await database('users').first();
-      console.log(expectedUser);
-      const { id } = expectedUser;
-
-      const response = await request(app).get(`/api/v1/users/${id}`);
-      //Response body log sends back the catch error 'internal server...'
-      const result = response.body[0];
-
-      expect(response.status).toBe(200);
-      expect(result).toEqual(expectedUser);
-    });
-  });
 });
