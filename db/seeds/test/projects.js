@@ -26,7 +26,6 @@ const createPalette = (knex, palette) => {
 
 exports.seed = async function(knex) {
   try {
-    await knex('colors').del();
     await knex('palettes').del();
     await knex('projects').del();
     // await knex.raw('ALTER SEQUENCE users_id_seq RESTART WITH 1');
