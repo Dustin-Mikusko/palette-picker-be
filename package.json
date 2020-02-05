@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --watchAll",
-    "start": "nodemon server.js"
+    "start": "nodemon --exec babel-node server.js"
   },
   "keywords": [],
   "author": "",
@@ -20,8 +19,5 @@
     "@babel/core": "^7.8.4",
     "@babel/node": "^7.8.4",
     "@babel/preset-env": "^7.8.4"
-  },
-  "scripts": {
-    "start": "nodemon --exec babel-node server.js"
   }
 }

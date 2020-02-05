@@ -28,10 +28,10 @@ exports.up = function(knex) {
       table.integer('color_2_id').unsigned();
       table.foreign('color_2_id')
         .references('colors.id');
-      table.integer('color_3_id').unsigned();  
+      table.integer('color_3_id').unsigned();
       table.foreign('color_3_id')
         .references('colors.id');
-      table.integer('color_4_id').unsigned();   
+      table.integer('color_4_id').unsigned();
       table.foreign('color_4_id')
         .references('colors.id');
       table.integer('color_5_id').unsigned();
@@ -43,7 +43,7 @@ exports.up = function(knex) {
 };
 
 exports.down = function(knex) {
-  return knex.schema 
+  return knex.schema
     .dropTable('projects')
     .dropTable('colors')
     .dropTable('users')
