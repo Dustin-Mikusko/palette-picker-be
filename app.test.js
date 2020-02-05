@@ -26,8 +26,7 @@ describe('Server', () => {
       const { id } = expectedUser;
 
       const response = await request(app).get(`/api/v1/users/${id}`);
-      console.log(response.body);
-      //Response body is coming back as an empty object, is supertest not configured properly?
+      //Response body log sends back the catch error 'internal server...'
       const result = response.body[0];
 
       expect(response.status).toBe(200);
