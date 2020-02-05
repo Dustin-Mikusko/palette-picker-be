@@ -1,18 +1,6 @@
-const express = require('express');
-const cors = require('cors');
-const app = express();
+import app from './app';
 
-app.use(cors());
-app.use(express.json());
-
-app.set('port', process.env.PORT || 3001);
-app.locals.title = 'Palette Picker';
-
-app.get('/', (req, res) => {
-  res.send('oh hello')
-})
- 
-
+app.set('port', process.env.PORT || 3000);
 
 app.listen(app.get('port'), () => {
   console.log(`${app.locals.title} is running on http://localhost:${app.get('port')}.`);

@@ -1,4 +1,4 @@
-const colors = require('../colors');
+const colors = require('../../../colors');
 
 const hexColors = colors.map(color => ({
   hex_code: color
@@ -10,6 +10,7 @@ exports.seed = async function(knex) {
     await knex('colors').del();
 
     return knex('colors').insert(hexColors);
+    
   } catch(error) {
     console.log(`Error seeding data: ${error}`)
   }
