@@ -21,12 +21,13 @@ describe('Server', () => {
 
   describe('GET /api/v1/users/:id', () => {
     it('should return a happy status code of 200 and a single user object', async () => {
-      const expectedUser = await database('users').first().select();
+      const expectedUser = await database('users').first();
       console.log(expectedUser);
       const { id } = expectedUser;
 
-      const response = await request(app).get(`/api/v1/students/${id}`);
+      const response = await request(app).get(`/api/v1/users/${id}`);
       console.log(response.body);
+      //Response body is coming back as an empty object, is supertest not configured properly?
       const result = response.body[0];
 
       expect(response.status).toBe(200);
