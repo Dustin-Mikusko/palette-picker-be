@@ -1,4 +1,5 @@
 const colors = require('../../../colors');
+const users = require('../../../users');
 
 const hexColors = colors.map(color => ({
   hex_code: color

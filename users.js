@@ -1,8 +1,6 @@
 const users = [
-    {email: 'Dustin@example.com' , password: 'Dirty D' , name: 'Dustin'},
-    {email: 'Austen@example.com' , password: 'AD' , name: 'Austen'},
-    {email: 'Joe@example.com' , password: 'JoJo' , name: 'Joey'}
-
+    {email: 'Dustin@example.com' , password: 'password' , name: 'Dustin D'},
+    {email: 'Austen@example.com' , password: 'password' , name: 'Austen D'}
   ];
 
 module.exports = users;
