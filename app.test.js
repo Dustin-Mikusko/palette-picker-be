@@ -22,14 +22,14 @@ describe('Server', () => {
   describe('GET /api/v1/projects/:id', () => {
     it('should return a happy status code of 200 and a single project object if the project exists', async () => {
       const expectedProject = await database('projects').first();
-      delete expectedProject.created_at;
-      delete expectedProject.updated_at;
+        delete expectedProject.created_at;
+        delete expectedProject.updated_at;
       const { id } = expectedProject;
 
       const response = await request(app).get(`/api/v1/projects/${id}`);
       const result = response.body[0];
-      delete result.created_at;
-      delete result.updated_at;
+        delete result.created_at;
+        delete result.updated_at;
 
       expect(response.status).toBe(200);
       expect(result).toEqual(expectedProject);
@@ -67,32 +67,10 @@ describe('Server', () => {
 
   describe('POST /api/v1/projects', () => {
     it('should post a new project to the database', async () => {
-      const newProject = {
-        title: 'pantry',
-        palettes: [
-          {
-            title: "Left Wall",
-            color_1_id: "#bbbbbb",
-            color_2_id: "#bbbbbb",
-            color_3_id: "#000000",
-            color_4_id: "#bbbbbb",
-            color_5_id: "#bbbbbb"
-          },
-          {
-            title: "Right Wall",
-            color_1_id: "#bb23bb",
-            color_2_id: "#690311",
-            color_3_id: "#ab0000",
-            color_4_id: "#bbbbbb",
-            color_5_id: "#bbbbbb"
-          }
-        ]
-      };
+      const newProject = {title: 'pantry'};
 
-      const response = await request(app).post('/api/v1/projects').send(newProject)
-
+      const response = await request(app).post('/api/v1/projects').send(newProject);
       const projects = await database('projects').where('id', response.body.id[0]);
-
       const project = projects[0];
 
       expect(response.status).toBe(201)
