@@ -50,7 +50,6 @@ app.get('/api/v1/projects/:id', async(request, response) => {
 
 app.post('/api/v1/projects', async (request, response) => {
   const project = request.body;
-
   for (let requiredParameter of ['title']) {
     if (!project.hasOwnProperty(requiredParameter)) {
       return response
@@ -61,7 +60,7 @@ app.post('/api/v1/projects', async (request, response) => {
 
   try {
     const id = await database('projects').insert(project, 'id');
-    response.status(201).json({id});
+    response.status(201).json({id: id[0], title: project.title});
   } catch (error) {
     response.status(500).json({ error });
   }

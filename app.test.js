@@ -65,9 +65,10 @@ describe('Server', () => {
       const newProject = {title: 'pantry'};
 
       const response = await request(app).post('/api/v1/projects').send(newProject);
-      const projects = await database('projects').where('id', response.body.id[0]);
+      console.log(response);
+      const projects = await database('projects').where('id', response.body.id);
       const project = projects[0];
-
+      console.log(project);
       expect(response.status).toBe(201)
       expect(project.title).toEqual(newProject.title)
     });
@@ -76,7 +77,6 @@ describe('Server', () => {
       const newProject = {missingParameter: 'title'};
 
       const response = await request(app).post('/api/v1/projects').send(newProject);
-
       expect(response.status).toBe(422);
       expect(response.body.error).toBe('The expected format is: { title: <String>}. You\'re missing a \"title\" property.')
     });
