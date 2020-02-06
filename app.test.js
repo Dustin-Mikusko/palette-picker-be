@@ -19,7 +19,6 @@ describe('Server', () => {
     });
   });
 
-  // //GET one project
   describe('GET /api/v1/projects/:id', () => {
     it('should return a happy status code of 200 and a single project object if the project exists', async () => {
       const expectedProject = await database('projects').first();
@@ -46,7 +45,28 @@ describe('Server', () => {
     });
   });
 
+  describe('GET /api/v1/projects', () => {
+    it('should return a happy status code of 200 and all project objects', async () => {
+      const expectedProjects = await database('projects').select();
+      const cleanedProjectsDB = expectedProjects.map(project => {
+        delete project.created_at;
+        delete project.updated_at;
+      });
+
+      const response = await request(app).get(`/api/v1/projects`);
+      const projects = response.body;
+      const cleanedProjectsST = projects.map(project => {
+        delete project.created_at;
+        delete project.updated_at;
+      });
+
+      expect(response.status).toBe(200);
+      expect(cleanedProjectsST).toEqual(cleanedProjectsDB);
+    });
+  });
+
   // //GET all project
+
   // api/v1/projects
   // //Delete a project
   // 'api/v1/projects/:id'
