@@ -21,7 +21,7 @@ describe('Server', () => {
 
   // //GET one project
   describe('GET /api/v1/projects/:id', () => {
-    it('should return a happy status code of 200 and a single project object', async () => {
+    it('should return a happy status code of 200 and a single project object if the project exists', async () => {
       const expectedProject = await database('projects').first();
       delete expectedProject.created_at;
       delete expectedProject.updated_at;
@@ -31,9 +31,18 @@ describe('Server', () => {
       const result = response.body[0];
       delete result.created_at;
       delete result.updated_at;
-      
+
       expect(response.status).toBe(200);
       expect(result).toEqual(expectedProject);
+    });
+
+    it('should return a 404 if the specific project is not found', async () => {
+      const invalidId = -467;
+
+      const response = await request(app).get(`/api/v1/projects/${invalidId}`);
+
+      expect(response.status).toBe(404);
+      expect(response.body.error).toEqual(`Could not find a project with id: ${invalidId}`);
     });
   });
 
