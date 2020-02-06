@@ -17,8 +17,8 @@ app.get('/', (req, res) => {
 
 app.get('/api/v1/projects/', async(request, response) => {
   try {
-    const project = await database('projects').select();
-    response.status(200).json(project)
+    const projects = await database('projects').select();
+    response.status(200).json(projects)
   } catch (error) {
     response.status(500).json({error: 'internal server error' })
   }
@@ -55,6 +55,31 @@ app.post('/api/v1/projects', async (request, response) => {
   try {
     const id = await database('projects').insert(project, 'id');
     response.status(201).json({id});
+  } catch (error) {
+    response.status(500).json({ error });
+  }
+});
+
+app.patch('/api/v1/projects/:id', async (request, response) => {
+  const { id } = request.params;
+  const editedProject = request.body;
+
+  for (let requiredParameter of ['title']) {
+    if (!editedProject.hasOwnProperty(requiredParameter)) {
+      return response
+        .status(422)
+        .send({ error: `The expected format is: { title: <String>}. You're missing a "${requiredParameter}" property.`})
+    }
+  }
+
+  try {
+    const projectToPatch = await database('projects').where('id', id)
+      .update(request.body, 'project_title');
+    if (project) {
+      response.status(201).json(project);
+    } else {
+      response.status(404).json({ error: `No project matching that id was found!`})
+    }
   } catch (error) {
     response.status(500).json({ error });
   }
