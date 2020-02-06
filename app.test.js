@@ -65,6 +65,41 @@ describe('Server', () => {
     });
   });
 
+  describe('POST /api/v1/projects', () => {
+    it('should post a new project to the database', async () => {
+      const newProject = {
+        title: 'pantry',
+        palettes: [
+          {
+            title: "Left Wall",
+            color_1_id: "#bbbbbb",
+            color_2_id: "#bbbbbb",
+            color_3_id: "#000000",
+            color_4_id: "#bbbbbb",
+            color_5_id: "#bbbbbb"
+          },
+          {
+            title: "Right Wall",
+            color_1_id: "#bb23bb",
+            color_2_id: "#690311",
+            color_3_id: "#ab0000",
+            color_4_id: "#bbbbbb",
+            color_5_id: "#bbbbbb"
+          }
+        ]
+      };
+
+      const response = await request(app).post('/api/v1/projects').send(newProject)
+
+      const projects = await database('projects').where('id', response.body.id[0]);
+
+      const project = projects[0];
+
+      expect(response.status).toBe(201)
+      expect(project.title).toEqual(newProject.title)
+    });
+  });
+
   // //GET all project
 
   // api/v1/projects
