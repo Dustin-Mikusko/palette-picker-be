@@ -15,10 +15,17 @@ app.get('/', (req, res) => {
   res.send('oh hello')
 });
 
-app.get('/api/v1/projects/', async(request, response) => {
+app.get('/api/v1/projects', async(request, response) => {
   try {
     const projects = await database('projects').select();
-    response.status(200).json(projects)
+    const cleanedProjects = projects.map(project => {
+      return {
+        id: project.id,
+        title: project.title
+      }
+    });
+
+    response.status(200).json({projects: cleanedProjects})
   } catch (error) {
     response.status(500).json({error: 'internal server error' })
   }
@@ -30,7 +37,7 @@ app.get('/api/v1/projects/:id', async(request, response) => {
     const project = await database('projects').where('id', id);
 
     if (project.length) {
-      response.status(200).json(project)
+      response.status(200).json({id: project[0].id, title: project[0].title});
     } else {
       response.status(404).json({
         error: `Could not find a project with id: ${request.params.id}`
@@ -60,30 +67,6 @@ app.post('/api/v1/projects', async (request, response) => {
   }
 });
 
-app.patch('/api/v1/projects/:id', async (request, response) => {
-  const { id } = request.params;
-  const editedProject = request.body;
-
-  for (let requiredParameter of ['title']) {
-    if (!editedProject.hasOwnProperty(requiredParameter)) {
-      return response
-        .status(422)
-        .send({ error: `The expected format is: { title: <String>}. You're missing a "${requiredParameter}" property.`})
-    }
-  }
-
-  try {
-    const projectToPatch = await database('projects').where('id', id)
-      .update(request.body, 'project_title');
-    if (project) {
-      response.status(201).json(project);
-    } else {
-      response.status(404).json({ error: `No project matching that id was found!`})
-    }
-  } catch (error) {
-    response.status(500).json({ error });
-  }
-});
 
 
 export default app;

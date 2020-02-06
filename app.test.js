@@ -22,14 +22,13 @@ describe('Server', () => {
   describe('GET /api/v1/projects/:id', () => {
     it('should return a happy status code of 200 and a single project object if the project exists', async () => {
       const expectedProject = await database('projects').first();
+      const { id } = expectedProject;
         delete expectedProject.created_at;
         delete expectedProject.updated_at;
-      const { id } = expectedProject;
 
       const response = await request(app).get(`/api/v1/projects/${id}`);
-      const result = response.body[0];
-        delete result.created_at;
-        delete result.updated_at;
+
+      const result = response.body;
 
       expect(response.status).toBe(200);
       expect(result).toEqual(expectedProject);
@@ -55,13 +54,9 @@ describe('Server', () => {
 
       const response = await request(app).get(`/api/v1/projects`);
       const projects = response.body;
-      const cleanedProjectsST = projects.map(project => {
-        delete project.created_at;
-        delete project.updated_at;
-      });
 
       expect(response.status).toBe(200);
-      expect(cleanedProjectsST).toEqual(cleanedProjectsDB);
+      expect(projects).toEqual({projects: expectedProjects})
     });
   });
 
@@ -86,17 +81,5 @@ describe('Server', () => {
       expect(response.body.error).toBe('The expected format is: { title: <String>}. You\'re missing a \"title\" property.')
     });
   });
-
-  // //GET all project
-
-  // api/v1/projects
-  // //Delete a project
-  // 'api/v1/projects/:id'
-  //   but first
-  // Deletes all attached palettes   api/v1/projects/id:/palettes'
-  // //POST a project
-  // 'api/v1/projects'
-  // //PUT title edit
-
 
 });
