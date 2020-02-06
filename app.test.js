@@ -76,6 +76,15 @@ describe('Server', () => {
       expect(response.status).toBe(201)
       expect(project.title).toEqual(newProject.title)
     });
+
+    it('should return a 422 if there are missing properties from the request body', async () => {
+      const newProject = {missingParameter: 'title'};
+
+      const response = await request(app).post('/api/v1/projects').send(newProject);
+
+      expect(response.status).toBe(422);
+      expect(response.body.error).toBe('The expected format is: { title: <String>}. You\'re missing a \"title\" property.')
+    });
   });
 
   // //GET all project
