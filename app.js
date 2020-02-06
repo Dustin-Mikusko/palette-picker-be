@@ -15,6 +15,15 @@ app.get('/', (req, res) => {
   res.send('oh hello')
 });
 
+app.get('/api/v1/projects/', async(request, response) => {
+  try {
+    const project = await database('projects').select();
+    response.status(200).json(project)
+  } catch (error) {
+    response.status(500).json({error: 'internal server error' })
+  }
+});
+
 app.get('/api/v1/projects/:id', async(request, response) => {
   const { id } = request.params;
   try {
