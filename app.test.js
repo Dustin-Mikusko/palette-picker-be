@@ -132,4 +132,20 @@ describe('Server', () => {
     });
   });
 
+
+  describe('GET /api/v1/palettes/:id', () => {
+    it('should return a status code of 200 and a single palette object', async () => {
+      const expectedPalette = await database('palettes').first();
+        delete expectedPalette.created_at;
+        delete expectedPalette.updated_at;
+      const { id } = expectedPalette;
+      const response = await request(app).get(`/api/v1/palettes/${id}`);
+      const result = response.body;
+        delete result.created_at;
+        delete result.updated_at;
+
+      expect(response.status).toBe(200);
+      expect(result).toEqual(expectedPalette);
+    })
+  })
 });

@@ -102,4 +102,30 @@ app.delete('/api/v1/palettes/:id', async (request, response) => {
   }
 });
 
+
+app.get('/api/v1/palettes/:id', async (request, response ) => {
+  const { id } = request.params;
+  try {
+    const palette = await database('palettes').where('id', id);
+
+    if (!palette.length) {
+      return res.status(404).json(`No team found with id ${id}`)
+    }
+
+    response.status(200).json({
+      id: palette[0].id,
+      title: palette[0].title,
+      color_1_id: palette[0].color_1_id,
+      color_2_id: palette[0].color_2_id,
+      color_3_id: palette[0].color_3_id,
+      color_4_id: palette[0].color_4_id,
+      color_5_id: palette[0].color_5_id,
+      project_id: palette[0].project_id
+    });
+  } catch (error) {
+    response.status(500).json({ error })
+  }
+});
+
+
 export default app;
