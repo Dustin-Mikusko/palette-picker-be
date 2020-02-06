@@ -127,5 +127,26 @@ app.get('/api/v1/palettes/:id', async (request, response ) => {
   }
 });
 
+app.get('/api/v1/palettes', async (request, response) => {
+  try {
+    const palettes = await database('palettes').select();
+    const displayPalettes = palettes.map(palette => ({
+      id: palette.id,
+      title: palette.title,
+      color_1_id: palette.color_1_id,
+      color_2_id: palette.color_2_id,
+      color_3_id: palette.color_3_id,
+      color_4_id: palette.color_4_id,
+      color_5_id: palette.color_5_id,
+      project_id: palette.project_id
+    }));
+
+    response.status(200).json({ palettes: displayPalettes });
+  } catch (error) {
+    response.status(500).json({ error });
+  }
+
+});
+
 
 export default app;

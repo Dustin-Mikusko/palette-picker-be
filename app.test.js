@@ -138,6 +138,7 @@ describe('Server', () => {
       const expectedPalette = await database('palettes').first();
         delete expectedPalette.created_at;
         delete expectedPalette.updated_at;
+
       const { id } = expectedPalette;
       const response = await request(app).get(`/api/v1/palettes/${id}`);
       const result = response.body;
@@ -157,5 +158,26 @@ describe('Server', () => {
       expect(response.status).toBe(404);
       expect(response.body.error).toEqual(`Could not find a palette with id: ${invalidId}`);
     });
-  })
+  });
+
+  describe('GET /api/v1/palettes', () => {
+    it('should return a status code of 200 and an array of palette objects', async () => {
+      const receivedPalettes = await database('palettes').select();
+      const expectedPalettes = receivedPalettes.map(palette => ({
+        id: palette.id,
+        title: palette.title,
+        color_1_id: palette.color_1_id,
+        color_2_id: palette.color_2_id,
+        color_3_id: palette.color_3_id,
+        color_4_id: palette.color_4_id,
+        color_5_id: palette.color_5_id,
+        project_id: palette.project_id
+      }))
+      const response = await request(app).get('/api/v1/palettes');
+      const palettes = response.body;
+
+      expect(response.status).toBe(200);
+      expect(palettes).toEqual({ palettes: expectedPalettes});
+    })
+  });
 });
