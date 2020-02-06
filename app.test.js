@@ -146,6 +146,16 @@ describe('Server', () => {
 
       expect(response.status).toBe(200);
       expect(result).toEqual(expectedPalette);
-    })
+    });
+
+    it('should return a 404 if the specific palette is not found', async () => {
+      const invalidId = -467;
+  
+
+      const response = await request(app).get(`/api/v1/palettes/${invalidId}`);
+      
+      expect(response.status).toBe(404);
+      expect(response.body.error).toEqual(`Could not find a palette with id: ${invalidId}`);
+    });
   })
 });

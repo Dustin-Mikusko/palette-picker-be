@@ -109,7 +109,7 @@ app.get('/api/v1/palettes/:id', async (request, response ) => {
     const palette = await database('palettes').where('id', id);
 
     if (!palette.length) {
-      return res.status(404).json(`No team found with id ${id}`)
+      return response.status(404).json({ error: `Could not find a palette with id: ${id}`})
     }
 
     response.status(200).json({
