@@ -153,7 +153,7 @@ describe('Server', () => {
     //   expect(response.status).toBe(404);
     //   console.log(response.body);
     //   //The response body is returning an empty object (so body.error = undef)
-    //   expect(response.body).toEqual(`Could not find a palette with id: ${invalidTargetId}`);
+    //   expect(response.body.error).toEqual(`Could not find a palette with id: ${invalidTargetId}`);
     // });
   });
 
