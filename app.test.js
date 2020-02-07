@@ -180,4 +180,41 @@ describe('Server', () => {
       expect(palettes).toEqual({ palettes: expectedPalettes});
     })
   });
+
+  describe('POST /api/v1/palettes', () => {
+    it('should post a new student to the db with a 201 status code', async () => {
+      const project = await database('projects').first();
+      const newPalette = {
+        title: 'floor',
+        color_1_id: '#fff443',
+        color_2_id: '#fad443',
+        color_3_id: '#fcd443',
+        color_4_id: '#facd43',
+        color_5_id: '#23f443',
+        project_id: project.id,
+      };
+      const response = await request(app).post('/api/v1/palettes').send(newPalette);
+      const palettes = await database('palettes').where('id', response.body.id);
+      const palette = palettes[0];
+
+      expect(response.status).toBe(201);
+      expect(palette.title).toEqual(newPalette.title);
+    });
+
+    it('should return a 422 status code if there is a missing property', async () => {
+      const project = await database('projects').first();
+      const newPalette = {
+        title: 'floor',
+        color_2_id: '#fad443',
+        color_3_id: '#fcd443',
+        color_4_id: '#facd43',
+        color_5_id: '#23f443',
+        project_id: project.id, 
+      };
+      const response = await request(app).post('/api/v1/palettes').send(newPalette);
+  
+      expect(response.status).toBe(422);
+      expect(response.body.error).toBe(`Expected format: { title: <String>, color_1_id: <String>, color_1_id: <String>, color_1_id: <String>, color_1_id: <String>, color_1_id: <String>, project_id: <Integer> }. You're missing a "color_1_id" property.`)
+    });
+  });
 });

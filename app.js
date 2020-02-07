@@ -145,8 +145,34 @@ app.get('/api/v1/palettes', async (request, response) => {
   } catch (error) {
     response.status(500).json({ error });
   }
-
 });
+
+app.post('/api/v1/palettes', async (request, response) => {
+  const palette = request.body;
+
+  for (let requiredParameter of ['title', 'color_1_id', 'color_2_id', 'color_3_id', 'color_4_id', 'color_5_id', 'project_id']) {
+    if (!palette[requiredParameter]) {
+      return response.status(422).send({ error: `Expected format: { title: <String>, color_1_id: <String>, color_1_id: <String>, color_1_id: <String>, color_1_id: <String>, color_1_id: <String>, project_id: <Integer> }. You're missing a "${requiredParameter}" property.` });
+    }
+  }
+
+  try {
+    const { title, color_1_id, color_2_id, color_3_id, color_4_id, color_5_id, project_id } = palette;
+    const id = await database('palettes').insert(palette, 'id');
+    response.status(201).json({
+      id: id[0],
+      title: title,
+      color_1_id: color_1_id,
+      color_2_id: color_2_id,
+      color_3_id: color_3_id,
+      color_4_id: color_4_id,
+      color_5_id: color_5_id,
+      project_id: project_id,
+    })
+  } catch (error) {
+    response.status(500).json({ error });
+  }
+})
 
 
 export default app;
