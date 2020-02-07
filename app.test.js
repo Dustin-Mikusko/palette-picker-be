@@ -95,7 +95,7 @@ describe('Server', () => {
         delete revisedProject.created_at;
         delete revisedProject.updated_at;
 
-      const expectedResult = {id, title: 'Master bedroom' };
+      const expectedResult = {id, title: newProject.title };
 
       expect(response.status).toBe(201);
       expect(revisedProject).toEqual(expectedResult);
