@@ -87,7 +87,6 @@ describe('Server', () => {
       const newProject = { title: 'Master bedroom' };
       const targetProject = await database('projects').first();
       const { id } = targetProject;
-      console.log(id);
 
       const response = await request(app).patch(`/api/v1/projects/${id}`).send(newProject)
 
@@ -220,19 +219,21 @@ describe('Server', () => {
 
   describe('DELETE /api/v1/projects/:id', () => {
     it('should should delete a project from the db and return a 204 status code', async () => {
-      const project = await database('projects').first();
-      await database('palettes').where('project_id', project.id).del();
+      const expectedProject = await database('projects').first();
+      const { id } = expectedProject;
 
-      const response = await request(app).delete(`/api/v1/projects/${project.id}`).send(`${project.id}`);
-      // console.log(response.status)
-
-      // const doesExist = await database('projects').where('id', project.id);
-
-      // console.log(response);
-      // console.log(doesExist);
+      const response = await request(app).delete(`/api/v1/projects/${id}`).send({ id });
 
       expect(response.status).toBe(204);
-      // expect(doesExist.length).toEqual(0);
     });
+
+    it('should return a 404 not found error is the id param is not found', async () => {
+      const invalidID = -1;
+
+      const response = await request(app).delete(`/api/v1/projects/${invalidID}`).send({ invalidID });
+
+      expect(response.status).toBe(404)
+      expect(response.body.error).toEqual(`No project found with submitted id.`)
+    })
   })
 });

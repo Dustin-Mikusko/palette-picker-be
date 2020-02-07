@@ -179,14 +179,12 @@ app.delete('/api/v1/projects/:id', async (request, response) => {
   try {
     const project = await database('projects').where('id', id);
 
-    if (!project) {
-      return response.status(404)
+    if (!project.length) {
+      return response.status(404).send({ error: `No project found with submitted id.` })
     }
-
-    await database('palettes').where('project_id', id).del();
     await database('projects').where('id', id).del();
 
-    response.status(204)
+    response.sendStatus(204)
   } catch (error) {
     response.status(500).json({ error });
   }
