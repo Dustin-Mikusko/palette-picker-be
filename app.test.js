@@ -73,7 +73,8 @@ describe('Server', () => {
     });
 
     it('should return a 422 if there are missing properties from the request body', async () => {
-      const newProject = {missingParameter: 'title'};
+      const newProject = {missingProperty: 'title'};
+
       const response = await request(app).post('/api/v1/projects').send(newProject);
 
       expect(response.status).toBe(422);
@@ -86,7 +87,6 @@ describe('Server', () => {
       const newProject = { title: 'Master bedroom' };
       const targetProject = await database('projects').first();
       const { id } = targetProject;
-      console.log(id);
 
       const response = await request(app).patch(`/api/v1/projects/${id}`).send(newProject)
 
@@ -132,4 +132,108 @@ describe('Server', () => {
     });
   });
 
+  describe('GET /api/v1/palettes/:id', () => {
+    it('should return a status code of 200 and a single palette object', async () => {
+      const expectedPalette = await database('palettes').first();
+        delete expectedPalette.created_at;
+        delete expectedPalette.updated_at;
+
+      const { id } = expectedPalette;
+      const response = await request(app).get(`/api/v1/palettes/${id}`);
+      const result = response.body;
+        delete result.created_at;
+        delete result.updated_at;
+
+      expect(response.status).toBe(200);
+      expect(result).toEqual(expectedPalette);
+    });
+
+    it('should return a 404 if the specific palette is not found', async () => {
+      const invalidId = -467;
+  
+
+      const response = await request(app).get(`/api/v1/palettes/${invalidId}`);
+      
+      expect(response.status).toBe(404);
+      expect(response.body.error).toEqual(`Could not find a palette with id: ${invalidId}`);
+    });
+  });
+
+  describe('GET /api/v1/palettes', () => {
+    it('should return a status code of 200 and an array of palette objects', async () => {
+      const receivedPalettes = await database('palettes').select();
+      const expectedPalettes = receivedPalettes.map(palette => ({
+        id: palette.id,
+        title: palette.title,
+        color_1_id: palette.color_1_id,
+        color_2_id: palette.color_2_id,
+        color_3_id: palette.color_3_id,
+        color_4_id: palette.color_4_id,
+        color_5_id: palette.color_5_id,
+        project_id: palette.project_id
+      }))
+      const response = await request(app).get('/api/v1/palettes');
+      const palettes = response.body;
+
+      expect(response.status).toBe(200);
+      expect(palettes).toEqual({ palettes: expectedPalettes});
+    })
+  });
+
+  describe('POST /api/v1/palettes', () => {
+    it('should post a new student to the db with a 201 status code', async () => {
+      const project = await database('projects').first();
+      const newPalette = {
+        title: 'floor',
+        color_1_id: '#fff443',
+        color_2_id: '#fad443',
+        color_3_id: '#fcd443',
+        color_4_id: '#facd43',
+        color_5_id: '#23f443',
+        project_id: project.id,
+      };
+      const response = await request(app).post('/api/v1/palettes').send(newPalette);
+      const palettes = await database('palettes').where('id', response.body.id);
+      const palette = palettes[0];
+
+      expect(response.status).toBe(201);
+      expect(palette.title).toEqual(newPalette.title);
+    });
+
+    it('should return a 422 status code if there is a missing property', async () => {
+      const project = await database('projects').first();
+      const newPalette = {
+        title: 'floor',
+        color_2_id: '#fad443',
+        color_3_id: '#fcd443',
+        color_4_id: '#facd43',
+        color_5_id: '#23f443',
+        project_id: project.id, 
+      };
+      const response = await request(app).post('/api/v1/palettes').send(newPalette);
+  
+      expect(response.status).toBe(422);
+      expect(response.body.error).toBe(`Expected format: { title: <String>, color_1_id: <String>, color_1_id: <String>, color_1_id: <String>, color_1_id: <String>, color_1_id: <String>, project_id: <Integer> }. You're missing a "color_1_id" property.`)
+    });
+  });
+
+  describe('DELETE /api/v1/projects/:id', () => {
+    it('should should delete a project from the db and return a 204 status code', async () => {
+      const expectedProject = await database('projects').first();
+      const { id } = expectedProject;
+
+      const response = await request(app).delete(`/api/v1/projects/${id}`).send({ id });
+
+      expect(response.status).toBe(204);
+    });
+
+    it('should return a 404 not found error is the id param is not found', async () => {
+      const invalidID = -1;
+
+      const response = await request(app).delete(`/api/v1/projects/${invalidID}`).send({ invalidID });
+
+      expect(response.status).toBe(404)
+      expect(response.body.error).toEqual(`No project found with submitted id.`)
+    })
+  })
 });
