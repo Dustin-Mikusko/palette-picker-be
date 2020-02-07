@@ -86,7 +86,6 @@ describe('Server', () => {
       const newProject = { title: 'Master bedroom' };
       const targetProject = await database('projects').first();
       const { id } = targetProject;
-      console.log(id);
 
       const response = await request(app).patch(`/api/v1/projects/${id}`).send(newProject)
 
@@ -109,6 +108,52 @@ describe('Server', () => {
       expect(response.status).toBe(404);
       expect(response.body.error).toEqual(`Could not find a project with id: ${invalidTargetId}`);
     });
+  });
+
+  describe('PATCH /api/v1/palettes/:id', () => {
+    it('should return a happy status of 201 and update a specific palette color', async () => {
+      const targetPalette = await database('palettes').first();
+      console.log(targetPalette);
+      const { id } = targetPalette;
+
+      const newPalette =  {
+        title: targetPalette.title,
+        color_1_id: '#abcdef',
+        color_2_id: targetPalette.color_2_id,
+        color_3_id: targetPalette.color_3_id,
+        color_4_id: targetPalette.color_4_id,
+        color_5_id: targetPalette.color_5_id
+      };
+
+      const response = await request(app).patch(`/api/v1/palettes/${id}`).send(newPalette)
+
+      const revisedPaletteArray = await database('palettes').where('id', id);
+      const revisedPalette = revisedPaletteArray[0];
+        delete revisedPalette.created_at;
+        delete revisedPalette.updated_at;
+
+      const expectedResult = {
+        id,
+        title: newPalette.title,
+        color_1_id: newPalette.color_1_id,
+        color_2_id: newPalette.color_2_id,
+        color_3_id: newPalette.color_3_id,
+        color_4_id: newPalette.color_4_id,
+        color_5_id: newPalette.color_5_id
+      };
+
+      expect(response.status).toBe(201);
+      expect(revisedPalette).toEqual(expectedResult);
+    });
+
+    // it('should return a sad 404 code if the targeted project is not found', async () => {
+    //   const invalidTargetId = -24;
+    //
+    //   const response = await request(app).get(`/api/v1/projects/${invalidTargetId}`);
+    //
+    //   expect(response.status).toBe(404);
+    //   expect(response.body.error).toEqual(`Could not find a project with id: ${invalidTargetId}`);
+    // });
   });
 
   describe('DELETE /api/v1/palettes/:id', () => {
