@@ -113,7 +113,6 @@ describe('Server', () => {
   describe('PATCH /api/v1/palettes/:id', () => {
     it('should return a happy status of 201 and update a specific palette', async () => {
       const targetPalette = await database('palettes').first();
-      console.log(targetPalette);
       const { id } = targetPalette;
 
       const newPalette =  {
@@ -147,13 +146,14 @@ describe('Server', () => {
       expect(revisedPalette).toEqual(expectedResult);
     });
 
-    // it('should return a sad 404 code if the targeted project is not found', async () => {
-    //   const invalidTargetId = -24;
-    //
-    //   const response = await request(app).get(`/api/v1/projects/${invalidTargetId}`);
+    // it('should return a sad 404 code if the targeted palette is not found', async () => {
+    //   const invalidTargetId = -675324;
+    //   const response = await request(app).get(`/api/v1/palettes/${invalidTargetId}`);
     //
     //   expect(response.status).toBe(404);
-    //   expect(response.body.error).toEqual(`Could not find a project with id: ${invalidTargetId}`);
+    //   console.log(response.body);
+    //   //The response body is returning an empty object (so body.error = undef)
+    //   expect(response.body).toEqual(`Could not find a palette with id: ${invalidTargetId}`);
     // });
   });
 
