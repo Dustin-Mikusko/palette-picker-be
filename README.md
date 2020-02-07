@@ -1,7 +1,7 @@
 **Initial scaffolding for Endpoint Documentation**
 
 | Purpose | URL | Verb | Request Body | Sample Success Response |
-|----|----|----|----|----|----|
+|----|----|----|----|----|
 | Get all projects |`/api/v1/projects`| GET | N/A | All projects in database: `{projects: [{id: 1, title: "Kitchen"}, {id: 2, title: "Bedroom"},...]}` |
 | Get specific project |`/api/v1/projects/:id`| GET | N/A | Single project: `{id: 1, title: "Kitchen"}` |
 | Submit a new project |`/api/v1/projects`| POST | `{title: <String>}` | The project that was successfully created: `{id: 100, title: "Hallway"}` |
