@@ -65,20 +65,43 @@ describe('Server', () => {
       const newProject = {title: 'pantry'};
 
       const response = await request(app).post('/api/v1/projects').send(newProject);
-      console.log(response);
       const projects = await database('projects').where('id', response.body.id);
       const project = projects[0];
-      console.log(project);
+
       expect(response.status).toBe(201)
       expect(project.title).toEqual(newProject.title)
     });
 
     it('should return a 422 if there are missing properties from the request body', async () => {
       const newProject = {missingParameter: 'title'};
-
       const response = await request(app).post('/api/v1/projects').send(newProject);
+
       expect(response.status).toBe(422);
       expect(response.body.error).toBe('The expected format is: { title: <String>}. You\'re missing a \"title\" property.')
+    });
+  });
+
+
+//Hey Dustin, please give this test ( and the implementation code) one a solid review.
+//The instructors have talked about comparing a single property in the expect statements, but since this
+//is such a small object, I've used the whole response body in the expect statements. What do you think?
+//I'm also concerned that I'm maybe comparing two inappropriate things in the expect statements. My thinking
+//was to compare the endpoint's response vs the updated DB results. 
+  describe('PATCH /api/v1/projects/:id', () => {
+    it('should return a happy status of 201 update a specific project title', async () => {
+      const newProject = { title: 'Master bedroom' };
+      const targetProject = await database('projects').first();
+      const { id } = targetProject;
+
+      const response = await request(app).patch(`/api/v1/projects/${id}`).send(newProject)
+
+      const revisedProjectArray = await database('projects').where('id', id);
+      const revisedProject = revisedProjectArray[0];
+        delete revisedProject.created_at;
+        delete revisedProject.updated_at;
+
+      expect(response.status).toBe(201);
+      expect(revisedProject).toEqual(response.body);
     });
   });
 
