@@ -100,14 +100,14 @@ describe('Server', () => {
       expect(revisedProject).toEqual(expectedResult);
     });
 
-    it('should return a sad 404 code if the targeted project is not found', async () => {
-      const invalidTargetId = -24;
-
-      const response = await request(app).get(`/api/v1/projects/${invalidTargetId}`);
-
-      expect(response.status).toBe(404);
-      expect(response.body.error).toEqual(`Could not find a project with id: ${invalidTargetId}`);
-    });
+    // it('should return a sad 404 code if the targeted project is not found', async () => {
+    //   const invalidTargetId = -24;
+    //
+    //   const response = await request(app).get(`/api/v1/palettes/${invalidTargetId}`);
+    //
+    //   expect(response.status).toBe(404);
+    //   expect(response.body.error).toEqual(`Could not find a project with id: ${invalidTargetId}`);
+    // });
   });
 
   describe('PATCH /api/v1/palettes/:id', () => {
