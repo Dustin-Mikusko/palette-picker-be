@@ -95,8 +95,9 @@ app.patch('/api/v1/palettes/:id', async (request, response) => {
         color_2_id: newPalette.color_2_id,
         color_3_id: newPalette.color_3_id,
         color_4_id: newPalette.color_4_id,
-        color_5_id: newPalette.color_5_id
-      }, ['id', 'title', 'color_1_id', 'color_2_id', 'color_3_id', 'color_4_id', 'color_5_id']
+        color_5_id: newPalette.color_5_id,
+        project_id: newPalette.project_id
+      }, ['id', 'title', 'color_1_id', 'color_2_id', 'color_3_id', 'color_4_id', 'color_5_id', 'project_id']
     );
 
     if (patchedPalette.length) {
@@ -108,7 +109,9 @@ app.patch('/api/v1/palettes/:id', async (request, response) => {
           color_2_id: patchedPalette[0].color_2_id,
           color_3_id: patchedPalette[0].color_3_id,
           color_4_id: patchedPalette[0].color_4_id,
-          color_5_id: patchedPalette[0].color_5_id
+          color_5_id: patchedPalette[0].color_5_id,
+          project_id: patchedPalette[0].project_id
+
         }
       );
     } else {

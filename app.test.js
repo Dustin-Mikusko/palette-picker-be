@@ -121,7 +121,8 @@ describe('Server', () => {
         color_2_id: targetPalette.color_2_id,
         color_3_id: targetPalette.color_3_id,
         color_4_id: targetPalette.color_4_id,
-        color_5_id: targetPalette.color_5_id
+        color_5_id: targetPalette.color_5_id,
+        project_id: targetPalette.project_id
       };
 
       const response = await request(app).patch(`/api/v1/palettes/${id}`).send(newPalette)
@@ -130,7 +131,6 @@ describe('Server', () => {
       const revisedPalette = revisedPaletteArray[0];
         delete revisedPalette.created_at;
         delete revisedPalette.updated_at;
-        delete revisedPalette.project_id;
 
       const expectedResult = {
         id,
@@ -139,7 +139,8 @@ describe('Server', () => {
         color_2_id: newPalette.color_2_id,
         color_3_id: newPalette.color_3_id,
         color_4_id: newPalette.color_4_id,
-        color_5_id: newPalette.color_5_id
+        color_5_id: newPalette.color_5_id,
+        project_id: newPalette.project_id
       };
 
       expect(response.status).toBe(201);
