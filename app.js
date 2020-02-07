@@ -67,5 +67,26 @@ app.post('/api/v1/projects', async (request, response) => {
 });
 
 
+app.patch('/api/v1/projects/:id', async (request, response) => {
+  const { id } = request.params;
+  console.log(request.body);
+  const newProject = request.body;
+
+  try {
+    const patchedProject = await database('projects').where('id', id).update({title: newProject.title}, ['id', 'title']);
+
+    if (patchedProject.length) {
+      response.status(201).json({id: patchedProject[0].id, title: patchedProject[0].title});
+    } else {
+      response.status(404).json({
+        error: `Could not find a project with id: ${request.params.id}`
+      });
+    }
+  } catch (error) {
+    response.status(500).json({error: 'internal server error' })
+  }
+});
+
+
 
 export default app;
