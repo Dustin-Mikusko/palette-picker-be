@@ -5,7 +5,6 @@ const configuration = require('./knexfile')[environment]
 const database = require('knex')(configuration)
 import '@babel/polyfill';
 
-
 const app = express();
 app.locals.title = 'Palette Picker';
 app.use(cors());
@@ -15,10 +14,17 @@ app.get('/', (req, res) => {
   res.send('oh hello')
 });
 
-app.get('/api/v1/projects/', async(request, response) => {
+app.get('/api/v1/projects', async(request, response) => {
   try {
     const projects = await database('projects').select();
-    response.status(200).json(projects)
+    const cleanedProjects = projects.map(project => {
+      return {
+        id: project.id,
+        title: project.title
+      }
+    });
+
+    response.status(200).json({projects: cleanedProjects})
   } catch (error) {
     response.status(500).json({error: 'internal server error' })
   }
@@ -30,7 +36,7 @@ app.get('/api/v1/projects/:id', async(request, response) => {
     const project = await database('projects').where('id', id);
 
     if (project.length) {
-      response.status(200).json(project)
+      response.status(200).json({id: project[0].id, title: project[0].title});
     } else {
       response.status(404).json({
         error: `Could not find a project with id: ${request.params.id}`
@@ -43,7 +49,6 @@ app.get('/api/v1/projects/:id', async(request, response) => {
 
 app.post('/api/v1/projects', async (request, response) => {
   const project = request.body;
-
   for (let requiredParameter of ['title']) {
     if (!project.hasOwnProperty(requiredParameter)) {
       return response
@@ -54,7 +59,7 @@ app.post('/api/v1/projects', async (request, response) => {
 
   try {
     const id = await database('projects').insert(project, 'id');
-    response.status(201).json({id});
+    response.status(201).json({id: id[0], title: project.title});
   } catch (error) {
     response.status(500).json({ error });
   }
@@ -62,28 +67,39 @@ app.post('/api/v1/projects', async (request, response) => {
 
 app.patch('/api/v1/projects/:id', async (request, response) => {
   const { id } = request.params;
-  const editedProject = request.body;
-
-  for (let requiredParameter of ['title']) {
-    if (!editedProject.hasOwnProperty(requiredParameter)) {
-      return response
-        .status(422)
-        .send({ error: `The expected format is: { title: <String>}. You're missing a "${requiredParameter}" property.`})
-    }
-  }
+  const newProject = request.body;
 
   try {
-    const projectToPatch = await database('projects').where('id', id)
-      .update(request.body, 'project_title');
-    if (project) {
-      response.status(201).json(project);
+    const patchedProject = await database('projects').where('id', id).update({title: newProject.title}, ['id', 'title']);
+
+    if (patchedProject.length) {
+      response.status(201).json({id: patchedProject[0].id, title: patchedProject[0].title});
     } else {
-      response.status(404).json({ error: `No project matching that id was found!`})
+      response.status(404).json({
+        error: `Could not find a project with id: ${request.params.id}`
+      });
     }
   } catch (error) {
-    response.status(500).json({ error });
+    response.status(500).json({error: 'internal server error' })
   }
 });
 
+app.delete('/api/v1/palettes/:id', async (request, response) => {
+  const { id } = request.params;
+
+  try {
+    const targetPalette = await database('palettes').where('id', id);
+    if (targetPalette.length) {
+      await database('palettes').where('id', id).del();
+      response.status(200).json(`Delete successful`);
+    } else {
+      response.status(404).json({
+        error: `Could not find a palette with id: ${id}`
+      });
+    }
+  } catch (error) {
+    response.status(500).json({error: 'internal server error' })
+  }
+});
 
 export default app;
