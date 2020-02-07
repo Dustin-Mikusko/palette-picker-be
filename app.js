@@ -84,6 +84,43 @@ app.patch('/api/v1/projects/:id', async (request, response) => {
   }
 });
 
+app.patch('/api/v1/palettes/:id', async (request, response) => {
+  const { id } = request.params;
+  const newPalette = request.body;
+  console.log(newPalette);
+  try {
+    const patchedPalette = await database('palettes').where('id', id)
+    .update(
+      {
+        title: newPalette.title,
+        color_1_id: newPalette.color_1_id,
+        color_2_id: newPalette.color_2_id,
+        color_3_id: newPalette.color_3_id,
+        color_4_id: newPalette.color_4_id,
+        color_5_id: newPalette.color_5_id
+      }, ['id', 'title', 'color_1_id', 'color_2_id', 'color_3_id', 'color_4_id', 'color_5_id']);
+
+    if (patchedPalette.length) {
+      response.status(201).json(
+        {
+          id: patchedPalette[0].id,
+          title: patchedPalette[0].title,
+          color_1_id: patchedPalette[0].color_1_id,
+          color_2_id: patchedPalette[0].color_2_id,
+          color_3_id: patchedPalette[0].color_3_id,
+          color_4_id: patchedPalette[0].color_4_id,
+          color_5_id: patchedPalette[0].color_5_id
+        });
+    } else {
+      response.status(404).json({
+        error: `Could not find a palette with id: ${request.params.id}`
+      });
+    }
+  } catch (error) {
+    response.status(500).json({error: 'internal server error' })
+  }
+});
+
 app.delete('/api/v1/palettes/:id', async (request, response) => {
   const { id } = request.params;
 
