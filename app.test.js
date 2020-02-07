@@ -73,7 +73,8 @@ describe('Server', () => {
     });
 
     it('should return a 422 if there are missing properties from the request body', async () => {
-      const newProject = {missingParameter: 'title'};
+      const newProject = {missingProperty: 'title'};
+
       const response = await request(app).post('/api/v1/projects').send(newProject);
 
       expect(response.status).toBe(422);
@@ -217,4 +218,22 @@ describe('Server', () => {
       expect(response.body.error).toBe(`Expected format: { title: <String>, color_1_id: <String>, color_1_id: <String>, color_1_id: <String>, color_1_id: <String>, color_1_id: <String>, project_id: <Integer> }. You're missing a "color_1_id" property.`)
     });
   });
+
+  describe('DELETE /api/v1/projects/:id', () => {
+    it('should should delete a project from the db and return a 204 status code', async () => {
+      const project = await database('projects').first();
+      await database('palettes').where('project_id', project.id).del();
+
+      const response = await request(app).delete(`/api/v1/projects/${project.id}`).send(`${project.id}`);
+      // console.log(response.status)
+
+      // const doesExist = await database('projects').where('id', project.id);
+
+      // console.log(response);
+      // console.log(doesExist);
+
+      expect(response.status).toBe(204);
+      // expect(doesExist.length).toEqual(0);
+    });
+  })
 });

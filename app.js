@@ -172,6 +172,25 @@ app.post('/api/v1/palettes', async (request, response) => {
   } catch (error) {
     response.status(500).json({ error });
   }
+});
+
+app.delete('/api/v1/projects/:id', async (request, response) => {
+  const { id } = request.params;
+
+  try {
+    const project = await database('projects').where('id', id);
+
+    if (!project) {
+      return response.status(404)
+    }
+
+    await database('palettes').where('project_id', id).del();
+    await database('projects').where('id', id).del();
+
+    response.status(204)
+  } catch (error) {
+    response.status(500).json({ error });
+  }
 })
 
 
