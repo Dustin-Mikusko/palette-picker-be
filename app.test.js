@@ -81,22 +81,12 @@ describe('Server', () => {
     });
   });
 
-//Hey Dustin, please give this PATCH test ( and the implementation code) a solid look-through.
-//The instructors have talked about comparing a single property in the expect statements, but since this
-//is such a small object, I've used the whole response body in the expect statements. What do you think?
-//I'm also concerned that I'm maybe comparing two inappropriate things in the expect statements. My thinking
-//was to compare the endpoint's response vs the updated DB results.
-
-
-//    Here's the documentation on the update() knex method I used for PATCH
-//  Search UPDATE here: ===>    http://knexjs.org/   ---- For info on the update method I used
-
-
   describe('PATCH /api/v1/projects/:id', () => {
     it('should return a happy status of 201 and update a specific project title', async () => {
       const newProject = { title: 'Master bedroom' };
       const targetProject = await database('projects').first();
       const { id } = targetProject;
+      console.log(id);
 
       const response = await request(app).patch(`/api/v1/projects/${id}`).send(newProject)
 
@@ -105,12 +95,14 @@ describe('Server', () => {
         delete revisedProject.created_at;
         delete revisedProject.updated_at;
 
+      const expectedResult = {id, title: 'Master bedroom' };
+
       expect(response.status).toBe(201);
-      expect(revisedProject).toEqual(response.body);
+      expect(revisedProject).toEqual(expectedResult);
     });
 
     it('should return a sad 404 code if the targeted project is not found', async () => {
-      const invalidTargetId = 24.8;
+      const invalidTargetId = -24;
 
       const response = await request(app).get(`/api/v1/projects/${invalidTargetId}`);
 
