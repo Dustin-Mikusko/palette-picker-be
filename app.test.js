@@ -133,41 +133,6 @@ describe('Server', () => {
     });
   });
 
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   describe('GET /api/v1/palettes/:id', () => {
     it('should return a status code of 200 and a single palette object', async () => {
       const expectedPalette = await database('palettes').first();

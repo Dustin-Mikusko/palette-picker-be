@@ -102,25 +102,6 @@ app.delete('/api/v1/palettes/:id', async (request, response) => {
   }
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 app.get('/api/v1/palettes/:id', async (request, response ) => {
   const { id } = request.params;
   try {
