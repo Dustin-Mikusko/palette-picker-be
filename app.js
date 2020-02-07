@@ -142,4 +142,93 @@ app.delete('/api/v1/palettes/:id', async (request, response) => {
   }
 });
 
+app.get('/api/v1/palettes/:id', async (request, response ) => {
+  const { id } = request.params;
+  try {
+    const palette = await database('palettes').where('id', id);
+
+    if (!palette.length) {
+      return response.status(404).json({ error: `Could not find a palette with id: ${id}`})
+    }
+
+    response.status(200).json({
+      id: palette[0].id,
+      title: palette[0].title,
+      color_1_id: palette[0].color_1_id,
+      color_2_id: palette[0].color_2_id,
+      color_3_id: palette[0].color_3_id,
+      color_4_id: palette[0].color_4_id,
+      color_5_id: palette[0].color_5_id,
+      project_id: palette[0].project_id
+    });
+  } catch (error) {
+    response.status(500).json({ error })
+  }
+});
+
+app.get('/api/v1/palettes', async (request, response) => {
+  try {
+    const palettes = await database('palettes').select();
+    const displayPalettes = palettes.map(palette => ({
+      id: palette.id,
+      title: palette.title,
+      color_1_id: palette.color_1_id,
+      color_2_id: palette.color_2_id,
+      color_3_id: palette.color_3_id,
+      color_4_id: palette.color_4_id,
+      color_5_id: palette.color_5_id,
+      project_id: palette.project_id
+    }));
+
+    response.status(200).json({ palettes: displayPalettes });
+  } catch (error) {
+    response.status(500).json({ error });
+  }
+});
+
+app.post('/api/v1/palettes', async (request, response) => {
+  const palette = request.body;
+
+  for (let requiredParameter of ['title', 'color_1_id', 'color_2_id', 'color_3_id', 'color_4_id', 'color_5_id', 'project_id']) {
+    if (!palette[requiredParameter]) {
+      return response.status(422).send({ error: `Expected format: { title: <String>, color_1_id: <String>, color_1_id: <String>, color_1_id: <String>, color_1_id: <String>, color_1_id: <String>, project_id: <Integer> }. You're missing a "${requiredParameter}" property.` });
+    }
+  }
+
+  try {
+    const { title, color_1_id, color_2_id, color_3_id, color_4_id, color_5_id, project_id } = palette;
+    const id = await database('palettes').insert(palette, 'id');
+    response.status(201).json({
+      id: id[0],
+      title: title,
+      color_1_id: color_1_id,
+      color_2_id: color_2_id,
+      color_3_id: color_3_id,
+      color_4_id: color_4_id,
+      color_5_id: color_5_id,
+      project_id: project_id,
+    })
+  } catch (error) {
+    response.status(500).json({ error });
+  }
+});
+
+app.delete('/api/v1/projects/:id', async (request, response) => {
+  const { id } = request.params;
+
+  try {
+    const project = await database('projects').where('id', id);
+
+    if (!project.length) {
+      return response.status(404).send({ error: `No project found with submitted id.` })
+    }
+    await database('projects').where('id', id).del();
+
+    response.sendStatus(204)
+  } catch (error) {
+    response.status(500).json({ error });
+  }
+})
+
+
 export default app;
