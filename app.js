@@ -5,7 +5,6 @@ const configuration = require('./knexfile')[environment]
 const database = require('knex')(configuration)
 import '@babel/polyfill';
 
-
 const app = express();
 app.locals.title = 'Palette Picker';
 app.use(cors());
@@ -66,10 +65,8 @@ app.post('/api/v1/projects', async (request, response) => {
   }
 });
 
-
 app.patch('/api/v1/projects/:id', async (request, response) => {
   const { id } = request.params;
-  console.log(request.body);
   const newProject = request.body;
 
   try {
@@ -87,6 +84,22 @@ app.patch('/api/v1/projects/:id', async (request, response) => {
   }
 });
 
+app.delete('/api/v1/palettes/:id', async (request, response) => {
+  const { id } = request.params;
 
+  try {
+    const targetPalette = await database('palettes').where('id', id);
+    if (targetPalette.length) {
+      await database('palettes').where('id', id).del();
+      response.status(200).json(`Delete successful`);
+    } else {
+      response.status(404).json({
+        error: `Could not find a palette with id: ${id}`
+      });
+    }
+  } catch (error) {
+    response.status(500).json({error: 'internal server error' })
+  }
+});
 
 export default app;
