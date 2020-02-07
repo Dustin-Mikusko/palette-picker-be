@@ -104,10 +104,58 @@ describe('Server', () => {
     it('should return a sad 404 code if the targeted project is not found', async () => {
       const invalidTargetId = -24;
 
-      const response = await request(app).get(`/api/v1/projects/${invalidTargetId}`);
+      const response = await request(app).get(`/api/v1/projects/${invalidTargetId}`).send(`${invalidTargetId}`);
 
       expect(response.status).toBe(404);
       expect(response.body.error).toEqual(`Could not find a project with id: ${invalidTargetId}`);
+    });
+  });
+
+  describe('PATCH /api/v1/palettes/:id', () => {
+    it('should return a happy status of 201 and update a specific palette', async () => {
+      const targetPalette = await database('palettes').first();
+      const { id } = targetPalette;
+
+      const newPalette =  {
+        title: targetPalette.title,
+        color_1_id: '#abcdef',
+        color_2_id: targetPalette.color_2_id,
+        color_3_id: targetPalette.color_3_id,
+        color_4_id: targetPalette.color_4_id,
+        color_5_id: targetPalette.color_5_id,
+        project_id: targetPalette.project_id
+      };
+
+      const response = await request(app).patch(`/api/v1/palettes/${id}`).send(newPalette)
+
+      const revisedPaletteArray = await database('palettes').where('id', id);
+      const revisedPalette = revisedPaletteArray[0];
+        delete revisedPalette.created_at;
+        delete revisedPalette.updated_at;
+
+      const expectedResult = {
+        id,
+        title: newPalette.title,
+        color_1_id: newPalette.color_1_id,
+        color_2_id: newPalette.color_2_id,
+        color_3_id: newPalette.color_3_id,
+        color_4_id: newPalette.color_4_id,
+        color_5_id: newPalette.color_5_id,
+        project_id: newPalette.project_id
+      };
+
+      expect(response.status).toBe(201);
+      expect(revisedPalette).toEqual(expectedResult);
+    });
+
+    it('should return a sad 404 code if the targeted palette is not found', async () => {
+      const invalidTargetId = -675324;
+      const response = await request(app).get(`/api/v1/palettes/${invalidTargetId}`).send(`${invalidTargetId}`);
+
+      expect(response.status).toBe(404);
+      console.log(response.body);
+      //The response body is returning an empty object (so body.error = undef)
+      expect(response.body.error).toEqual(`Could not find a palette with id: ${invalidTargetId}`);
     });
   });
 
@@ -141,8 +189,6 @@ describe('Server', () => {
       const { id } = expectedPalette;
       const response = await request(app).get(`/api/v1/palettes/${id}`);
       const result = response.body;
-        delete result.created_at;
-        delete result.updated_at;
 
       expect(response.status).toBe(200);
       expect(result).toEqual(expectedPalette);
@@ -150,10 +196,10 @@ describe('Server', () => {
 
     it('should return a 404 if the specific palette is not found', async () => {
       const invalidId = -467;
-  
+
 
       const response = await request(app).get(`/api/v1/palettes/${invalidId}`);
-      
+
       expect(response.status).toBe(404);
       expect(response.body.error).toEqual(`Could not find a palette with id: ${invalidId}`);
     });
@@ -208,10 +254,10 @@ describe('Server', () => {
         color_3_id: '#fcd443',
         color_4_id: '#facd43',
         color_5_id: '#23f443',
-        project_id: project.id, 
+        project_id: project.id,
       };
       const response = await request(app).post('/api/v1/palettes').send(newPalette);
-  
+
       expect(response.status).toBe(422);
       expect(response.body.error).toBe(`Expected format: { title: <String>, color_1_id: <String>, color_1_id: <String>, color_1_id: <String>, color_1_id: <String>, color_1_id: <String>, project_id: <Integer> }. You're missing a "color_1_id" property.`)
     });
