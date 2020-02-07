@@ -111,7 +111,7 @@ describe('Server', () => {
   });
 
   describe('PATCH /api/v1/palettes/:id', () => {
-    it('should return a happy status of 201 and update a specific palette color', async () => {
+    it('should return a happy status of 201 and update a specific palette', async () => {
       const targetPalette = await database('palettes').first();
       console.log(targetPalette);
       const { id } = targetPalette;
@@ -131,6 +131,7 @@ describe('Server', () => {
       const revisedPalette = revisedPaletteArray[0];
         delete revisedPalette.created_at;
         delete revisedPalette.updated_at;
+        delete revisedPalette.project_id;
 
       const expectedResult = {
         id,
