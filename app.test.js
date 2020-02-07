@@ -81,14 +81,19 @@ describe('Server', () => {
     });
   });
 
-
-//Hey Dustin, please give this test ( and the implementation code) one a solid review.
+//Hey Dustin, please give this PATCH test ( and the implementation code) a solid look-through.
 //The instructors have talked about comparing a single property in the expect statements, but since this
 //is such a small object, I've used the whole response body in the expect statements. What do you think?
 //I'm also concerned that I'm maybe comparing two inappropriate things in the expect statements. My thinking
-//was to compare the endpoint's response vs the updated DB results. 
+//was to compare the endpoint's response vs the updated DB results.
+
+
+//    Here's the documentation on the update() knex method I used for PATCH
+//  Search UPDATE here: ===>    http://knexjs.org/   ---- For info on the update method I used
+
+
   describe('PATCH /api/v1/projects/:id', () => {
-    it('should return a happy status of 201 update a specific project title', async () => {
+    it('should return a happy status of 201 and update a specific project title', async () => {
       const newProject = { title: 'Master bedroom' };
       const targetProject = await database('projects').first();
       const { id } = targetProject;
@@ -102,6 +107,36 @@ describe('Server', () => {
 
       expect(response.status).toBe(201);
       expect(revisedProject).toEqual(response.body);
+    });
+
+    it('should return a sad 404 code if the targeted project is not found', async () => {
+      const invalidTargetId = 24.8;
+
+      const response = await request(app).get(`/api/v1/projects/${invalidTargetId}`);
+
+      expect(response.status).toBe(404);
+      expect(response.body.error).toEqual(`Could not find a project with id: ${invalidTargetId}`);
+    });
+  });
+
+  describe('DELETE /api/v1/palettes/:id', () => {
+    it('should return a happy status of 201 if delete is successful', async () => {
+      const targetPalette = await database('palettes').first();
+      const { id } = targetPalette;
+
+      const response = await request(app).delete(`/api/v1/palettes/${id}`).send(`${id}`);
+      const aftermath = await database('palettes').where('id', id);
+
+      expect(response.status).toBe(200);
+      expect(aftermath).toEqual([]);
+    });
+
+    it('should return a sad 404 code if the targeted palette is not found', async () => {
+      const targetPaletteId = -1234;
+      const response = await request(app).delete(`/api/v1/palettes/${targetPaletteId}`).send(`${targetPaletteId}`);
+
+      expect(response.status).toBe(404);
+      expect(response.body.error).toEqual(`Could not find a palette with id: ${targetPaletteId}`)
     });
   });
 
