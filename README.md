@@ -1,4 +1,5 @@
-**Initial scaffolding for Endpoint Documentation**
+### Palette Picker API
+Each endpoint is prefaced by `https://palette-picker-1908.herokuapp.com`
 
 | Purpose | URL | Verb | Request Body | Sample Success Response |
 |----|----|----|----|----|
