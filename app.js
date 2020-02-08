@@ -1,4 +1,4 @@
-import '@babel/polyfill';
+// import '@babel/polyfill';
 const express= require('express');
 const cors = require('cors');
 
@@ -233,4 +233,4 @@ app.delete('/api/v1/projects/:id', async (request, response) => {
 })
 
 
-export default app;
+module.exports = app;
