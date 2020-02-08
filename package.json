@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest --watchAll",
     "start:prod": "babel-node server.js",
-    "start": "nodemon --exec babel-node server.js"
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",

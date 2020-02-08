@@ -1,5 +1,6 @@
-import express from 'express';
-import cors from 'cors';
+import '@babel/polyfill';
+const express= require('express');
+const cors = require('cors');
 
 
 const app = express();
@@ -10,7 +11,6 @@ app.use(express.json());
 const environment = process.env.NODE_ENV || 'development';
 const configuration = require('./knexfile')[environment];
 const database = require('knex')(configuration);
-import '@babel/polyfill';
 
 app.get('/', (req, res) => {
   res.send('oh hello')
