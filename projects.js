@@ -35,7 +35,7 @@ const projects = [
         title: "counter",
         color_1_id: "#bb211b",
         color_2_id: "#220311",
-        color_3_id: "#ab3300",
+        color_3_id: "#bbbbbb",
         color_4_id: "#55hd97",
         color_5_id: "#929911"
       }

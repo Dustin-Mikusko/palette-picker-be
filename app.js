@@ -169,20 +169,40 @@ app.get('/api/v1/palettes/:id', async (request, response ) => {
 });
 
 app.get('/api/v1/palettes', async (request, response) => {
-  try {
-    const palettes = await database('palettes').select();
-    const displayPalettes = palettes.map(palette => ({
-      id: palette.id,
-      title: palette.title,
-      color_1_id: palette.color_1_id,
-      color_2_id: palette.color_2_id,
-      color_3_id: palette.color_3_id,
-      color_4_id: palette.color_4_id,
-      color_5_id: palette.color_5_id,
-      project_id: palette.project_id
-    }));
+  let queryCode = await request.query.hexCode;
+  let hexCode = `#${queryCode}`;
 
-    response.status(200).json({ palettes: displayPalettes });
+  try {
+    if (queryCode) {
+      const queryPalettes = await database('palettes').where('color_1_id', hexCode).orWhere('color_2_id', hexCode).orWhere('color_3_id', hexCode).orWhere('color_4_id', hexCode).orWhere('color_5_id', hexCode);
+
+      const displayPalettes = queryPalettes.map(palette => ({
+        id: palette.id,
+        title: palette.title,
+        color_1_id: palette.color_1_id,
+        color_2_id: palette.color_2_id,
+        color_3_id: palette.color_3_id,
+        color_4_id: palette.color_4_id,
+        color_5_id: palette.color_5_id,
+        project_id: palette.project_id
+      }));
+
+      response.status(200).json({ palettes: displayPalettes });
+    } else {
+      const palettes = await database('palettes').select();
+      const displayPalettes = palettes.map(palette => ({
+        id: palette.id,
+        title: palette.title,
+        color_1_id: palette.color_1_id,
+        color_2_id: palette.color_2_id,
+        color_3_id: palette.color_3_id,
+        color_4_id: palette.color_4_id,
+        color_5_id: palette.color_5_id,
+        project_id: palette.project_id
+      }));
+
+      response.status(200).json({ palettes: displayPalettes });
+    } 
   } catch (error) {
     response.status(500).json({ error });
   }
@@ -230,7 +250,6 @@ app.delete('/api/v1/projects/:id', async (request, response) => {
   } catch (error) {
     response.status(500).json({ error });
   }
-})
-
+});
 
 module.exports = app;
