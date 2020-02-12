@@ -3,7 +3,8 @@
 [Dustin Mikusko](https://github.com/Dustin-Mikusko)<br>
 [Austen Dunn](https://github.com/Dunn-Austen)
 
-
+### Overview
+This API consists of 2 database tables, projects and palettes, that serve to supply data to corresponding Front-End application: [palette-picker-fe](https://github.com/Dustin-Mikusko/palette-picker-fe)
 
 ### Endpoints
 
