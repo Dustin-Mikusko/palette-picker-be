@@ -1,4 +1,13 @@
-### Palette Picker API
+# Palette Picker API
+Dev Team:
+
+[Dustin Mikusko](https://github.com/Dustin-Mikusko)
+[Austen Dunn](https://github.com/Dunn-Austen)
+
+
+
+### Endpoints
+
 Each endpoint is prefaced by `https://palette-picker-1908.herokuapp.com`
 
 | Purpose | URL | Verb | Request Body | Sample Success Response |
